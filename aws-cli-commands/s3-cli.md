@@ -4,9 +4,9 @@
 
 ```
 aws s3 ls
-aws s3 ls s3://tgsbucket
-aws s3 ls s3://tgsbucket --recursive
-aws s3 ls s3://tgsbucket --recursive  --human-readable --summarize
+aws s3 ls s3://datatechdemo2222
+aws s3 ls s3://datatechdemo2222 --recursive
+aws s3 ls s3://datatechdemo2222 --recursive  --human-readable --summarize
 
 ```
 
