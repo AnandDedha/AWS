@@ -64,6 +64,6 @@ aws s3 sync s3://datatechdemo2222 s3://backup-bucket
 #### Exclude & Include - we can filter the results by using the --exclude or --include option.
 
 ```
-aws s3 cp . s3://my-bucket/path --exclude "*.txt"
+aws s3 cp . s3://my-bucket/path --include "*.txt"
 ```
 
