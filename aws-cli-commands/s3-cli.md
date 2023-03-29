@@ -10,6 +10,21 @@ aws s3 ls s3://datatechdemo2222 --recursive  --human-readable --summarize
 
 ```
 
+#### Create New S3 Bucket
+
+```
+aws s3 mb s3://datatechdemo22223
+aws s3 mb s3://datatechdemo22223 --region us-west-2
+
+```
+
+#### Remove existing s3 bucket 
+
+```
+aws s3 rb s3://datatechdemo22223
+
+```
+
 #### cp - Copy command
 
 ```
@@ -46,18 +61,4 @@ aws s3 sync s3://datatechdemo2222/backup /tmp/backup
 aws s3 sync s3://datatechdemo2222 s3://backup-bucket
 ```
 
-#### Create New S3 Bucket
-
-```
-aws s3 mb s3://datatechdemo22223
-aws s3 mb s3://datatechdemo22223 --region us-west-2
-
-```
-
-#### Remove existing s3 bucket 
-
-```
-aws s3 rb s3://datatechdemo22223
-
-```
-
+#### Exclude & Include - we can filter the results by using the --exclude or --include option.
