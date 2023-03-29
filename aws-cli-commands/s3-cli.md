@@ -56,9 +56,14 @@ aws s3 rm s3://datatechdemo2222 --recursive
 #### sync - synchronization commands
 
 ```
-aws s3 sync DataSync s3://datatechdemo222
+aws s3 sync DataSync s3://datatechdemo2222
 aws s3 sync s3://datatechdemo2222/backup /tmp/backup
 aws s3 sync s3://datatechdemo2222 s3://backup-bucket
 ```
 
 #### Exclude & Include - we can filter the results by using the --exclude or --include option.
+
+```
+aws s3 cp . s3://my-bucket/path --exclude "*.txt"
+```
+
