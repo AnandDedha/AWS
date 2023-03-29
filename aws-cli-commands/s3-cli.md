@@ -64,6 +64,6 @@ aws s3 sync s3://datatechdemo2222 s3://backup-bucket
 #### Exclude & Include - we can filter the results by using the --exclude or --include option.
 
 ```
-aws s3 cp DataSync/ --recursive s3://datatechdemo2222/logs/ --include "*.jpg" 
+aws s3 cp ./DataSync/ s3://datatechdemo2222/logs/ --recursive  --include "*.jpg" 
 ```
 
