@@ -6,8 +6,9 @@
    You choose sort keys based on the following criteria:
 
    1. If recent data is queried most frequently, specify the timestamp column as the leading column.
-   2. If you frequently filter by a range of values or a single value on one column, that column should be the sort key.
-   3. Columns frequently used in joins should be used as the sort key
+   2. If you frequently filter by a range of values or a single value on one column, that column should be the sort key. Amazon Redshift can skip reading entire blocks of data for that column. It can do so because it tracks the minimum and maximum column values stored on each block and can skip blocks that don't apply to the predicate range.
+
+   3. If you frequently join a table, specify the join column as both the sort key and the distribution key.
     Here are some examples of defining the sort key:
  
      -- sale_date is the timestamp column
