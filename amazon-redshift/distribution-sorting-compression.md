@@ -46,8 +46,9 @@ ALL: With this style, a complete copy of the table is stored on each compute nod
      );
 
     -- Use DISTSTYLE table attribute to set it to ALL
-    CREATE TABLE atrribute_lookup (
-       attribute_id INT NOT NULL PRIMARY KEY,
-       attribute_name VARCHAR
+    CREATE TABLE bus_domain_lookup (
+       bus_id INT NOT NULL PRIMARY KEY,
+       bus_name VARCHAR
        )
      DISTSTYLE ALL;
+
