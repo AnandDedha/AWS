@@ -12,3 +12,6 @@ If you wonder why the update operations are also included together with deletes,
 During a DELETE command, a row is marked as deleted but not removed. Additionally, the query processor has to scan all the rows, including those marked as deleted. So it is easy to understand that keeping deleted rows on a table costs additional process and thus slow down your queries.
 
 In extreme situations, you might even end up with queries that may timeout due to the extra overhead the deleted but not reclaimed space might add.
+
+
+https://www.rudderstack.com/guides/vacuum-amazon-redshift/
