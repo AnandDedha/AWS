@@ -3,11 +3,11 @@
 #### 1) Using the Original Table & DDL Command
 
 Steps to Create Deep Copy for Amazon Redshift Copy Table
-     
-      Using the CREATE Table DDL, create a copy of the parent table.
-      Use the INSERT command to insert the data from the parent table to the newly created table. 
-      Drop the parent table.
-      Use the ALTER TABLE command to rename the new table with the original name.
+
+1) Using the CREATE Table DDL, create a copy of the parent table.
+2) Use the INSERT command to insert the data from the parent table to the newly created table.
+3) Drop the parent table.
+4) Use the ALTER TABLE command to rename the new table with the original name.
 
 Let’s understand the above steps with a real-time example. Consider a table of sales that contains the sales records of the products as shown in the code below:
 
@@ -34,10 +34,10 @@ This method is useful when the create table DDL is not available. This method us
 
 Steps to Create Deep Copy for Amazon Redshift Copy Table
 
-        Using the CREATE TABLE LIKE command, create a copy of the parent table.
-        Use the INSERT command to insert the data from the parent table to the newly created table. 
-        Drop the parent table.
-        Let us understand the above steps with a real-time example. Consider a table sales that contains the sales records of the products. 
+1) Using the CREATE TABLE LIKE command, create a copy of the parent table.
+2) Use the INSERT command to insert the data from the parent table into the newly created table.
+3) Drop the parent table.
+4) Let us understand the above steps with a real-time example. Consider a table sales that contains the sales records of the products. 
 
         CREATE TABLE SALES_COPY (
         sales_id int,
@@ -63,10 +63,11 @@ This method is useful when dependencies are in the parent table and cannot be de
 The temporary table is session-based. Hence the temporary table will automatically drop when the current session ends. Therefore this method produces a risk of losing data if anything goes wrong. 
 
 Steps to perform Deep Copy for Amazon Redshift Copy Table
-        Use CREATE TABLE AS SELECT command (CTAS) to create a temporary table similar to the parent table. 
-        Truncate the parent table.
-        Use the INSERT command to insert the data from the temporary table to the parent table.
-        Let us understand the above steps with a real-time example. Consider a table of sales that contains the sales records of the products. The code is shown below:
+       
+1) Use CREATE TABLE AS SELECT command (CTAS) to create a temporary table similar to the parent table.
+2) Truncate the parent table.
+3) Use the INSERT command to insert the data from the temporary table into the parent table.
+4) Let us understand the above steps with a real-time example. Consider a table of sales that contains the sales records of the products. The code is shown below:
         
         CREATE TEMP TABLE SALES_TEMP AS (SELECT * FROM SALES) 
         TRUNCATE SALES;
