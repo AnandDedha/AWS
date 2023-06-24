@@ -53,7 +53,7 @@ Rename the new table with the old table as shown in the code below:
 
         ALTER TABLE SALES_COPY RENAME TO SALES;
 
-3) Amazon Redshift Copy Table: Using a Temporary Table & Truncating Original Table
+#### 3) Amazon Redshift Copy Table: Using a Temporary Table & Truncating Original Table
 
 This method is useful when dependencies are in the parent table and cannot be deleted. Using the temporary table approach improves the performance, but also there is a risk of losing data.
 
