@@ -19,10 +19,13 @@ Let’s understand the above steps with a real-time example. Consider a table of
       INSERT INTO SALES_COPY (SELECT * FROM SALES) 
       
 Once the data is completely copied to the SALES_COPY table, drop the original table as shown in the code below:
+      
       DROP TABLE SALES;
 
 Rename the new table with the old table as shown in the code below:
+      
       ALTER TABLE SALES_COPY RENAME TO SALES;
+      
 #### 2) Using CREATE TABLE LIKE Command
 
 This method is useful when the create table DDL is not available. This method uses the CREATE TABLE LIKE command that inherits the encoding, distribution key, sort key, etc., from the old table to the new table. It doesn’t inherit the old table’s primary and foreign keys.
@@ -43,9 +46,11 @@ This method is useful when the create table DDL is not available. This method us
         INSERT INTO SALES_COPY (SELECT * FROM SALES) 
 
 Once the data is completely copied to the SALES_COPY table, drop the original table as shown in the code below:
+
         DROP TABLE SALES;
 
 Rename the new table with the old table as shown in the code below:
+
         ALTER TABLE SALES_COPY RENAME TO SALES;
 
 3) Amazon Redshift Copy Table: Using a Temporary Table & Truncating Original Table
