@@ -1,4 +1,7 @@
+---
+marp: true
 
+---
 
 
 Amazon Redshift does not reclaim free space automatically. Such available space is created whenever you delete or update rows on a table. This process is a design choice inherited from PostgreSQL and a routine maintenance process that we need to follow for our tables to maximize the utilization of our Amazon Redshift cluster.
