@@ -5,6 +5,6 @@ Select userid, name, gender, genderlooking, age,
             when lang_it =True then 'Italian'
             when lang_es =True then 'Hindi'
             when lang_pt =True then 'Spanish'
-           else "Language missiong" end as Lang,
+           else "Language missing" end as Lang,
      lastonlinetime
 from myDataSource
