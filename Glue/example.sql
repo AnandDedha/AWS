@@ -8,3 +8,6 @@ Select userid, name, gender, genderlooking, age,
            else "Language missing" end as Lang,
      lastonlinetime
 from myDataSource
+
+
+-- DDL table
