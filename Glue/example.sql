@@ -11,3 +11,6 @@ from myDataSource
 
 
 -- DDL table
+
+ CREATE  SCHEMA dating_app_schema IF NOT EXISTS;
+
