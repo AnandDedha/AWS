@@ -12,5 +12,15 @@ from myDataSource
 
 -- DDL table
 
- CREATE  SCHEMA dating_app_schema IF NOT EXISTS;
+CREATE  SCHEMA dating_app_schema IF NOT EXISTS;
+CREATE EXTERNAL TABLE dating_app_schema.cust_dim (
+  userid varchar(25) not null, 
+  name varchar(50) not null, 
+  gender varchar(25)  not null,   
+  genderlooking varchar(25)  not null,
+  age int,
+  Lang varchar(25)  not null,  
+  lastonlinetime TIMESTAMP
+   )
+
 
