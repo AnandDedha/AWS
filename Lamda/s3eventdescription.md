@@ -4,7 +4,7 @@
 
 **Records:** This is an array that contains the details of the triggered event. In this case, there is one event in the array.
 
-**eventVersion: **Specifies the version of the event structure.
+**eventVersion: ** Specifies the version of the event structure.
 
 ** eventSource:** Indicates the source of the event, which is AWS S3 in this example.
 
