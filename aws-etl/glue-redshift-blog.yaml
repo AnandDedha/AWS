@@ -1,5 +1,5 @@
 Description: >-
-  Amazon Redshift integration for Apache Spark  
+  AWS ETL using Apache Spark  
 Mappings:
   SubnetConfig:
     VPC:
