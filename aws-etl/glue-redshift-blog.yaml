@@ -334,6 +334,8 @@ Resources:
                 Resource:
                   - !Sub 'arn:aws:s3:::${DataBucket}'
                   - !Sub 'arn:aws:s3:::${DataBucket}/*'
+                  - !Sub 'arn:aws:s3:::${SourceDataBucket}'
+                  - !Sub 'arn:aws:s3:::${SourceDataBucket}/*'
               - Sid: ListPermissions
                 Effect: Allow
                 Action:
