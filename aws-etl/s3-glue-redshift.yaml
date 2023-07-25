@@ -367,7 +367,7 @@ Resources:
       CatalogId: !Ref AWS::AccountId
       ConnectionInput:
           ConnectionType: JDBC
-          Name: redshift-demo-blog-connection
+          Name: redshift-demo-connection
           PhysicalConnectionRequirements:
             SecurityGroupIdList:
               - !Ref RedShiftSG
