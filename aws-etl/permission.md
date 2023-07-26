@@ -1,0 +1,2 @@
+## Error 
+Exception encountered while creating session: An error occurred (AccessDeniedException) when calling the CreateSession operation: User: arn:aws:sts::262136919150:assumed-role/s3-glue-redshift-RedshiftIamRole-1NP96VPG5JWDN/GlueJobRunnerSession is not authorized to perform: iam:PassRole on resource: arn:aws:iam::262136919150:role/s3-glue-redshift-RedshiftIamRole-1NP96VPG5JWDN because no identity-based policy allows the iam:PassRole action 
