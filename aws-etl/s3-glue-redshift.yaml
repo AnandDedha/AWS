@@ -310,6 +310,7 @@ Resources:
             Action: 'sts:AssumeRole'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+       # These are inline policies which we define manually --- delete this lines  while using in cloud formation
       Policies:
         - PolicyName: Redshift-IAM-Policy
           PolicyDocument:
