@@ -16,7 +16,7 @@ Mappings:
     redshift:
       userName: redshiftmasteruser
       dbName: dev
-      nodeType: ra3.4xlarge
+      nodeType: dc2.large
       # Make sure you use the right value for "nodeCount" when using betweeen "multi-node" and "single-node"
       clusterType: multi-node
       nodeCount: 2
