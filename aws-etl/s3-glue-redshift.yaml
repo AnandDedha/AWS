@@ -343,6 +343,12 @@ Resources:
                   - 's3:ListBucket'
                 Resource:
                   - '*'
+              - Sid: AllowIAMPass
+                Effect: Allow
+                Action:
+                  - 'iam:GetRole'
+                  - 'iam:PassRole'
+                
   RedshiftCluster:
     Type: 'AWS::Redshift::Cluster'
     DependsOn:
