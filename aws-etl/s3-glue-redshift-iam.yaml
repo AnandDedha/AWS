@@ -349,8 +349,7 @@ Resources:
                   - 'iam:GetRole'
                   - 'iam:PassRole'
                 Resource:
-                  - arn:aws:iam::<$aws-account-id>:role/AWSGlueServiceRole-glueworkshop
-                
+                  - '*'           
   RedshiftCluster:
     Type: 'AWS::Redshift::Cluster'
     DependsOn:
