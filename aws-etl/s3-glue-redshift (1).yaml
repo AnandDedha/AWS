@@ -1,0 +1,398 @@
+Description: >-
+  AWS ETL using Apache Spark  
+Mappings:
+  SubnetConfig:
+    VPC:
+      CIDR: 10.192.0.0/16
+    Public1:
+      CIDR: 10.192.10.0/24
+    Public2:
+      CIDR: 10.192.11.0/24
+    Private1:
+      CIDR: 10.192.20.0/24
+    Private2:
+      CIDR: 10.192.21.0/24
+  ClusterConfigurations:
+    redshift:
+      userName: redshiftmasteruser
+      dbName: dev
+      nodeType: dc2.large
+      # Make sure you use the right value for "nodeCount" when using betweeen "multi-node" and "single-node"
+      clusterType: multi-node
+      nodeCount: 2
+Resources:
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !FindInMap 
+        - SubnetConfig
+        - VPC
+        - CIDR
+      InstanceTenancy: default
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+        - Key: Name
+          Value: Default-VPC
+        - Key: for-use-with-glue-redshift-blog
+          Value: 'true'
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: IG
+  VPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: !FindInMap 
+        - SubnetConfig
+        - Public1
+        - CIDR
+      MapPublicIpOnLaunch: 'true'
+      AvailabilityZone: !Select 
+        - 0
+        - !GetAZs 
+          Ref: 'AWS::Region'
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PublicSubnet1
+        - Key: for-use-with-glue-redshift-blog
+          Value: 'true'
+  PublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: !FindInMap 
+        - SubnetConfig
+        - Public2
+        - CIDR
+      MapPublicIpOnLaunch: 'true'
+      AvailabilityZone: !Select 
+        - 1
+        - !GetAZs 
+          Ref: 'AWS::Region'
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PublicSubnet2
+        - Key: for-use-with-glue-redshift-blog
+          Value: 'true'
+  PrivateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: !FindInMap 
+        - SubnetConfig
+        - Private1
+        - CIDR
+      AvailabilityZone: !Select 
+        - 0
+        - !GetAZs 
+          Ref: 'AWS::Region'
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet1
+        - Key: for-use-with-glue-redshift-blog
+          Value: 'true'
+  PrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: !FindInMap 
+        - SubnetConfig
+        - Private2
+        - CIDR
+      AvailabilityZone: !Select 
+        - 1
+        - !GetAZs 
+          Ref: 'AWS::Region'
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet2
+        - Key: for-use-with-glue-redshift-blog
+          Value: 'true'
+  NATGateway1EIP:
+    Type: 'AWS::EC2::EIP'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      Domain: vpc
+  NATGateway2EIP:
+    Type: 'AWS::EC2::EIP'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      Domain: vpc
+  NATGateway1:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      AllocationId: !GetAtt 
+        - NATGateway1EIP
+        - AllocationId
+      Tags:
+        - Key: Name
+          Value: NAT-Gateway1
+  NATGateway2:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      AllocationId: !GetAtt 
+        - NATGateway2EIP
+        - AllocationId
+      Tags:
+        - Key: Name
+          Value: NAT-Gateway2
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PublicRouteTable
+  DefaultPublicRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId: !Ref PublicRouteTable
+      GatewayId: !Ref InternetGateway
+  PublicSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+  PublicSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+  PrivateRouteTable1:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTable1
+  DefaultPrivateRoute1:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId: !Ref PrivateRouteTable1
+      NatGatewayId: !Ref NATGateway1
+  PrivateSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      SubnetId: !Ref PrivateSubnet1
+  PrivateRouteTable2:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTable2
+  DefaultPrivateRoute2:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId: !Ref PrivateRouteTable2
+      NatGatewayId: !Ref NATGateway2
+  PrivateSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      SubnetId: !Ref PrivateSubnet2
+  S3Endpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: '*'
+            Principal: '*'
+            Resource: '*'
+      RouteTableIds:
+        - !Ref PrivateRouteTable1
+        - !Ref PrivateRouteTable2
+        - !Ref PublicRouteTable
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      VpcId: !Ref VPC
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+  SourceDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+  VPCDefaultSecurityGroupIngress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !GetAtt 
+        - VPC
+        - DefaultSecurityGroup
+      IpProtocol: '-1'
+      CidrIp: !FindInMap 
+        - SubnetConfig
+        - VPC
+        - CIDR
+  RedShiftSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'Security group for Redshift cluster'
+      VpcId: !Ref VPC
+  RedshiftSGIngressSelfAllTcp:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref RedShiftSG
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !Ref RedShiftSG
+  RedshiftSGIngressSelfAllUdp:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref RedShiftSG
+      IpProtocol: udp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !Ref RedShiftSG
+  RedshiftSubnetGroup:
+    Type: 'AWS::Redshift::ClusterSubnetGroup'
+    Properties:
+      Description: 'Redshift cluster subnet group'
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+  RedshiftClusterParameterGroup:
+    Type: 'AWS::Redshift::ClusterParameterGroup'
+    Properties:
+      Description: !Join [ " ", [ !Ref 'AWS::StackName', " - Redshift Cluster Parameter group" ]] 
+      ParameterGroupFamily: redshift-1.0
+  RedshiftCreds:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Description: !Sub Redshift cluster master user credentials for ${AWS::StackName}
+      GenerateSecretString:
+        SecretStringTemplate: !Join [ '', [ '{"username": "', !FindInMap [ ClusterConfigurations, redshift, userName ], '"}' ]]
+        GenerateStringKey: 'password'
+        PasswordLength: 16
+        ExcludePunctuation: true
+      Tags:
+        -
+          Key: RedshiftGlueBlogCred
+          Value: 'true'
+  RedshiftIamRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - redshift.amazonaws.com
+                - glue.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+       # These are inline policies which we define manually --- delete this lines  while using in cloud formation
+      Policies:
+        - PolicyName: Redshift-IAM-Policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: AllowAccesstoDataBucket
+                Effect: Allow
+                Action:
+                  - 's3:AbortMultipartUpload'
+                  - 's3:DeleteObject'
+                  - 's3:GetBucketVersioning'
+                  - 's3:GetObject'
+                  - 's3:GetObjectTagging'
+                  - 's3:GetObjectVersion'
+                  - 's3:ListBucket'
+                  - 's3:ListBucketMultipartUploads'
+                  - 's3:ListBucketVersions'
+                  - 's3:ListMultipartUploadParts'
+                  - 's3:PutBucketVersioning'
+                  - 's3:PutObject'
+                  - 's3:PutObjectTagging'
+                Resource:
+                  - !Sub 'arn:aws:s3:::${DataBucket}'
+                  - !Sub 'arn:aws:s3:::${DataBucket}/*'
+                  - !Sub 'arn:aws:s3:::${SourceDataBucket}'
+                  - !Sub 'arn:aws:s3:::${SourceDataBucket}/*'
+              - Sid: ListPermissions
+                Effect: Allow
+                Action:
+                  - 's3:ListBucket'
+                Resource:
+                  - '*'
+  RedshiftCluster:
+    Type: 'AWS::Redshift::Cluster'
+    DependsOn:
+      - RedshiftCreds
+    Properties:
+      ClusterIdentifier: !Sub ${AWS::StackName}-Redshift-Cluster
+      DBName: !FindInMap [ ClusterConfigurations, redshift, dbName ]
+      MasterUsername: !Join [ '', [ '{{resolve:secretsmanager:', !Ref RedshiftCreds, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join [ '', [ '{{resolve:secretsmanager:', !Ref RedshiftCreds, ':SecretString:password}}' ]]
+      NodeType: !FindInMap [ ClusterConfigurations, redshift, nodeType ]
+      ClusterType: !FindInMap [ ClusterConfigurations, redshift, clusterType ]
+      NumberOfNodes: !FindInMap [ ClusterConfigurations, redshift, nodeCount ]
+      PubliclyAccessible: false
+      VpcSecurityGroupIds:
+        - !Ref RedShiftSG
+      IamRoles:
+        - !GetAtt RedshiftIamRole.Arn
+      ClusterSubnetGroupName: !Ref RedshiftSubnetGroup
+      ClusterParameterGroupName: !Ref RedshiftClusterParameterGroup
+  GlueRedshiftConnection:
+    Type: AWS::Glue::Connection
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      ConnectionInput:
+          ConnectionType: JDBC
+          Name: redshift-demo-connection
+          PhysicalConnectionRequirements:
+            SecurityGroupIdList:
+              - !Ref RedShiftSG
+            SubnetId: !Ref PrivateSubnet1
+            AvailabilityZone: !Select 
+              - 0
+              - !GetAZs
+                Ref: 'AWS::Region'
+          ConnectionProperties: {
+            "JDBC_CONNECTION_URL": !Join [ '', [ 'jdbc:redshift://', !GetAtt RedshiftCluster.Endpoint.Address, ':', !GetAtt RedshiftCluster.Endpoint.Port, '/', !FindInMap [ ClusterConfigurations, redshift, dbName ]]],
+            "USERNAME": !Join [ '', [ '{{resolve:secretsmanager:', !Ref RedshiftCreds, ':SecretString:username}}' ]],
+            "PASSWORD": !Join [ '', [ '{{resolve:secretsmanager:', !Ref RedshiftCreds, ':SecretString:password}}' ]]
+          }
+
+Outputs:
+  RedshiftClusterJdbcUrl:
+    Description: JDBC URL for Redshift Cluster
+    Value: !Join [ '', [ 'jdbc:redshift:iam://', !GetAtt RedshiftCluster.Endpoint.Address, ':', !GetAtt RedshiftCluster.Endpoint.Port, '/', !FindInMap [ ClusterConfigurations, redshift, dbName ]]]
+  RedshiftUserName:
+    Description: Username for Redshift cluster
+    Value: !FindInMap [ ClusterConfigurations, redshift, userName ]
+  RedshiftIamRoleArn:
+    Description: AWS IAM role ARN for Redshift
+    Value: !GetAtt RedshiftIamRole.Arn
+  RedshiftS3TempPath:
+    Description: Temporary path used by Redshift to store data
+    Value: !Join [ '', [ 's3://', !Ref DataBucket, '/redshift-temp-dir/' ]]
