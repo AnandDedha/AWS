@@ -53,3 +53,11 @@ create_demo_catalog = BashOperator(
     )
 
 [delete_demo_s3_objects, delete_demo_catalog] >> [list_demo_s3_objects, create_demo_catalog]
+
+
+
+## Load
+
+## Transform using AwsGlueJobOperator
+
+## Load from s3 to  S3ToRedshiftOperator
