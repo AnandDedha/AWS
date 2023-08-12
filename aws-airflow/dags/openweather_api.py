@@ -5,6 +5,8 @@ from airflow.sensors.http_sensor import HttpSensor
 from airflow.models import Variable
 from datetime import datetime, timedelta
 import json
+from airflow.providers.amazon.aws.operators.s3 import S3CreateObjectOperator
+import pandas as pd
 
 default_args = {
     'owner': 'airflow',
@@ -26,24 +28,15 @@ api_params = {
     }
 
 def extract_openweather_data(**kwargs):
-
-    response = SimpleHttpOperator(
-        task_id='extract_data',
-        http_conn_id='http_weatherapi',  # You'll need to set up an HTTP connection in Airflow
-        endpoint=api_endpoint,
-        method='GET',
-        data=json.dumps(api_params),
-        response_check=lambda response: True if response.status_code == 200 else False,
-        dag=dag,
-    )
-    response.execute(kwargs)
-
-def process_openweather_data(**kwargs):
-    response = kwargs['task_instance'].xcom_pull(task_ids='extract_data')
-    data = json.loads(response.text)
-    # Process the data as needed
+    print("Extracting started ")
+    ti = kwargs['ti']
+    response = requests.get(api_endpoint, params=api_params)
+    data = response.json()
     print(data)
-
+    df = pd.DataFrame(response['list'])
+    print(df)
+    ti.xcom_push(key = 'final_data' , value = df.to_csv(index=False))
+    
 # Define the tasks
 is_api_ready = HttpSensor(
     task_id='check_api_data',
@@ -53,12 +46,20 @@ is_api_ready = HttpSensor(
     dag=dag,
 )
 
-extract_data_task = PythonOperator(
-    task_id='process_data',
-    python_callable=process_openweather_data,
+extract_api_data = PythonOperator(
+    task_id='extract_api_data',
+    python_callable=extract_openweather_data,
     provide_context=True,
     dag=dag,
 )
 
+upload_to_s3 = S3CreateObjectOperator(
+        task_id="upload-to-S3",
+        aws_conn_id= 'AWS_CONN',
+        s3_bucket='airflow-s3-bucket',
+        s3_key='weather_api_data.csv',
+        data="{{ ti.xcom_pull(key='final_data') }}",    
+    )
+
 # Set task dependencies
-is_api_ready >> extract_data_task >> upload_to_s3_task
+is_api_ready >> extract_api_data >> upload_to_s3
