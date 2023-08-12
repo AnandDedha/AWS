@@ -18,7 +18,7 @@ default_args = {
 
 dag = DAG('openweather_api_dag', default_args=default_args, schedule_interval="@once",catchup=False)
 
- # Set your OpenWeather API endpoint and parameters
+# Set your OpenWeather API endpoint and parameters
 api_endpoint = "https://api.openweathermap.org/data/2.5/weather"
 appid = Variable.get("api_key")
 city_country = "Toronto,Canada"
