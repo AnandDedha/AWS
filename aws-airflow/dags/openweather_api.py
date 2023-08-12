@@ -61,4 +61,4 @@ extract_data_task = PythonOperator(
 )
 
 # Set task dependencies
-is_api_ready >> extract_data_task
+is_api_ready >> extract_data_task >> upload_to_s3_task
