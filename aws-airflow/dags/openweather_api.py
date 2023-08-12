@@ -41,7 +41,7 @@ def extract_openweather_data(**kwargs):
 is_api_ready = HttpSensor(
     task_id='check_api_data',
     http_conn_id='http_weatherapi',
-    endpoint= f'{api_endpoint}?q={city_country}&appid={appid}'
+    endpoint= f'{api_endpoint}?q={city_country}&appid={appid}',
     response_check=lambda response: True if response.status_code == 200 else False,
     dag=dag,
 )
