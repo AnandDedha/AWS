@@ -18,6 +18,8 @@ dag = DAG('openweather_api_dag', default_args=default_args, schedule_interval="@
 
  # Set your OpenWeather API endpoint and parameters
 api_endpoint = "https://api.openweathermap.org/data/2.5/weather"
+appid = Variable.get("api_key")
+city_country = "Toronto,Canada"
 api_params = {
         "q": "Toronto,Canada",
         "appid": Variable.get("api_key")
@@ -46,8 +48,7 @@ def process_openweather_data(**kwargs):
 is_api_ready = HttpSensor(
     task_id='check_api_data',
     http_conn_id='http_weatherapi',
-    endpoint= api_endpoint,
-    request_params= api_params,
+    endpoint= f'{api_endpoint}?q={city_country}&appid={appid}'
     response_check=lambda response: True if response.status_code == 200 else False,
     dag=dag,
 )
