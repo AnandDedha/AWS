@@ -58,7 +58,8 @@ upload_to_s3 = S3CreateObjectOperator(
         aws_conn_id= 'AWS_CONN',
         s3_bucket='airflow-s3-bucket',
         s3_key='weather_api_data.csv',
-        data="{{ ti.xcom_pull(key='final_data') }}",    
+        data="{{ ti.xcom_pull(key='final_data') }}",
+        dag=dag,
     )
 
 # Set task dependencies
