@@ -24,7 +24,7 @@ appid = Variable.get("key")
 city_country = "Toronto,Canada"
 api_params = {
         "q": "Toronto,Canada",
-        "appid": Variable.get("api_key")
+        "appid": Variable.get("key")
     }
 
 def extract_openweather_data(**kwargs):
