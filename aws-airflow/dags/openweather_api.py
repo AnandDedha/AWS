@@ -56,7 +56,7 @@ extract_api_data = PythonOperator(
 upload_to_s3 = S3CreateObjectOperator(
         task_id="upload_to_S3",
         aws_conn_id= 'AWS_CONN',
-        s3_bucket='airflow-s3-bucket',
+        s3_bucket='airflow-s3-bucket-datatech',
         s3_key='weather_api_data.csv',
         data="{{ ti.xcom_pull(key='final_data') }}",
         dag=dag,
