@@ -1,12 +1,12 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
-from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.sensors.http_sensor import HttpSensor
 from airflow.models import Variable
 from datetime import datetime, timedelta
 import json
 from airflow.providers.amazon.aws.operators.s3 import S3CreateObjectOperator
 import pandas as pd
+import requests
 
 default_args = {
     'owner': 'airflow',
