@@ -33,7 +33,7 @@ def extract_openweather_data(**kwargs):
     response = requests.get(api_endpoint, params=api_params)
     data = response.json()
     print(data)
-    df = pd.DataFrame(response['list'])
+    df = pd.DataFrame(response['weather'])
     print(df)
     ti.xcom_push(key = 'final_data' , value = df.to_csv(index=False))
     
