@@ -263,7 +263,7 @@ Resources:
       ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
       VpcId: !Ref VPC
   
-  EnvironmentBucket:
+  AirflowEnvironmentBucket:
     Type: AWS::S3::Bucket
     Properties:
       VersioningConfiguration:
@@ -274,7 +274,7 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
-  DatatechGlueScripts:
+  GlueScriptsBucket:
     Type: AWS::S3::Bucket
     Properties:
       PublicAccessBlockConfiguration:
@@ -282,6 +282,15 @@ Resources:
         BlockPublicPolicy: True
         IgnorePublicAcls: True
         RestrictPublicBuckets: True
+
+ AirflowOutputBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True       
 
   DataBucket:
     Type: AWS::S3::Bucket
