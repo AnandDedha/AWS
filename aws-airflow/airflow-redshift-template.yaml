@@ -310,7 +310,7 @@ Resources:
     DependsOn: MwaaExecutionRole
     Properties:
       Name: !Sub "${AWS::StackName}-MwaaEnvironment"
-      SourceBucketArn: !GetAtt EnvironmentBucket.Arn
+      SourceBucketArn: !GetAtt AirflowEnvironmentBucket.Arn
       ExecutionRoleArn: !GetAtt MwaaExecutionRole.Arn
       DagS3Path: dags
       NetworkConfiguration:
