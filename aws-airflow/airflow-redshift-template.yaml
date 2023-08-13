@@ -283,7 +283,7 @@ Resources:
         IgnorePublicAcls: True
         RestrictPublicBuckets: True
 
- AirflowOutputBucket:
+ AirflowOutputToS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       PublicAccessBlockConfiguration:
