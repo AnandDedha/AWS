@@ -247,6 +247,15 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
+  datatech-glue-scripts:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+  
   #####################################################################################################################
   # CREATE MWAA
   #####################################################################################################################
