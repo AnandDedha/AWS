@@ -274,7 +274,7 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
-  datatech-glue-scripts:
+  DatatechGlueScripts:
     Type: AWS::S3::Bucket
     Properties:
       PublicAccessBlockConfiguration:
