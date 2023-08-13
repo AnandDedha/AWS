@@ -19,7 +19,7 @@ dag = DAG('s3_to_redshift_dag', default_args=default_args, schedule_interval=tim
 transform_task = GlueJobOperator(
     task_id='transform_task',
     job_name='your_glue_job_name',
-    script_location='s3://datatech-glue-scripts/your-glue-script.py',
+    script_location='s3://DatatechGlueScripts/your-glue-script.py',
     aws_conn_id='AWS_CONN',  # You'll need to set up an AWS connection in Airflow
     region_name='your_aws_region',
     num_of_dpus=2,
