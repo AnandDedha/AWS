@@ -292,7 +292,7 @@ Resources:
         IgnorePublicAcls: True
         RestrictPublicBuckets: True       
 
-  DataBucket:
+  RedshiftTempDataBucket:
     Type: AWS::S3::Bucket
     Properties:
       PublicAccessBlockConfiguration:
@@ -424,7 +424,7 @@ Resources:
           PolicyDocument:
             Version: 2012-10-17
             Statement:
-              - Sid: AllowAccesstoDataBucket
+              - Sid: AllowAccesstoRedshiftTempDataBucket
                 Effect: Allow
                 Action:
                   - 's3:AbortMultipartUpload'
@@ -441,8 +441,8 @@ Resources:
                   - 's3:PutObject'
                   - 's3:PutObjectTagging'
                 Resource:
-                  - !Sub 'arn:aws:s3:::${DataBucket}'
-                  - !Sub 'arn:aws:s3:::${DataBucket}/*'
+                  - !Sub 'arn:aws:s3:::${RedshiftTempDataBucket}'
+                  - !Sub 'arn:aws:s3:::${RedshiftTempDataBucket}/*'
               - Sid: ListPermissions
                 Effect: Allow
                 Action:
@@ -539,4 +539,4 @@ Outputs:
 
   RedshiftS3TempPath:
     Description: Temporary path used by Redshift to store data
-    Value: !Join [ '', [ 's3://', !Ref DataBucket, '/redshift-temp-dir/' ]]
+    Value: !Join [ '', [ 's3://', !Ref RedshiftTempDataBucket, '/redshift-temp-dir/' ]]
