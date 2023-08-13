@@ -43,7 +43,7 @@ Parameters:
   MaxWorkerNodes:
     Description: The maximum number of workers that can run in the environment
     Type: Number
-    Default: 2
+    Default: 4
   DagProcessingLogs:
     Description: Log level for DagProcessing
     Type: String
