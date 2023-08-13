@@ -20,8 +20,6 @@ dag = DAG('openweather_api_dag', default_args=default_args, schedule_interval="@
 
 # Set your OpenWeather API endpoint and parameters
 api_endpoint = "https://api.openweathermap.org/data/2.5/weather"
-appid = Variable.get("key")
-city_country = "Toronto,Canada"
 api_params = {
         "q": "Toronto,Canada",
         "appid": Variable.get("key")
@@ -38,14 +36,6 @@ def extract_openweather_data(**kwargs):
     print(df)
     ti.xcom_push(key = 'final_data' , value = df.to_csv(index=False))
     
-# Define the tasks
-is_api_ready = HttpSensor(
-    task_id='check_api_data',
-    http_conn_id='http_weatherapi',
-    endpoint= f'{api_endpoint}?q={city_country}&appid={appid}',
-    response_check=lambda response: True if response.status_code == 200 else False,
-    dag=dag,
-)
 
 extract_api_data = PythonOperator(
     task_id='extract_api_data',
@@ -64,4 +54,4 @@ upload_to_s3 = S3CreateObjectOperator(
     )
 
 # Set task dependencies
-is_api_ready >> extract_api_data >> upload_to_s3
+extract_api_data >> upload_to_s3
