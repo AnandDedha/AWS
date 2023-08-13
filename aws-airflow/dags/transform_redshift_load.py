@@ -22,6 +22,7 @@ transform_task = GlueJobOperator(
     script_location='s3://DatatechGlueScripts/transform.py',
     aws_conn_id='AWS_CONN',  # You'll need to set up an AWS connection in Airflow
     region_name="us-east-1",
+    iam_role_name='GlueS3',
     num_of_dpus=4,
     dag=dag,
 )
