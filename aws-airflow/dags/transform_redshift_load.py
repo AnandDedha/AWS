@@ -37,4 +37,4 @@ wait_openweather_api = ExternalTaskSensor(
 )
     
 # Set task dependencies
-wait_openweather_api >> s3_to_redshift_task 
+wait_openweather_api >> transform_task
