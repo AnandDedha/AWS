@@ -13,7 +13,7 @@ job = Job(glueContext)
 job.init(args["JOB_NAME"], args)
 
 # Script generated for node Amazon S3
-AmazonS3_node1691969769821 = glueContext.create_dynamic_frame.from_options(
+weather_dyf = glueContext.create_dynamic_frame.from_options(
     format_options={"quoteChar": '"', "withHeader": True, "separator": ","},
     connection_type="s3",
     format="csv",
@@ -21,12 +21,12 @@ AmazonS3_node1691969769821 = glueContext.create_dynamic_frame.from_options(
         "paths": ["s3://airflowoutputtos3bucket/raw/weather_api_data.csv"],
         "recurse": True,
     },
-    transformation_ctx="AmazonS3_node1691969769821",
+    transformation_ctx="weather_dyf",
 )
 
 # Script generated for node Change Schema
-ChangeSchema_node1691969957128 = ApplyMapping.apply(
-    frame=AmazonS3_node1691969769821,
+changeschema_weather_dyf = ApplyMapping.apply(
+    frame=weather_dyf,
     mappings=[
         ("dt", "string", "dt", "string"),
         ("weather", "string", "weather", "string"),
@@ -40,19 +40,16 @@ ChangeSchema_node1691969957128 = ApplyMapping.apply(
         ("`main.humidity`", "string", "humidity", "bigint"),
         ("`wind.speed`", "string", "wind", "string"),
     ],
-    transformation_ctx="ChangeSchema_node1691969957128",
+    transformation_ctx="changeschema_weather_dyf",
 )
 
-# Script generated for node Amazon S3
-AmazonS3_node1691970092196 = glueContext.write_dynamic_frame.from_options(
-    frame=ChangeSchema_node1691969957128,
-    connection_type="s3",
-    format="csv",
-    connection_options={
-        "path": "s3://airflowoutputtos3bucket/transformed/",
-        "partitionKeys": [],
-    },
-    transformation_ctx="AmazonS3_node1691970092196",
+
+redshift_output = glueContext.write_dynamic_frame.from_jdbc_conf(
+    frame=changeschema_weather_dyf,
+    catalog_connection="redshift-demo-connection",
+    connection_options={"dbtable": "public.weather_data","database":"dev"},
+    redshift_tmp_dir = "s3://aws-glue-assets-262136919150-us-east-1/temporary/",
+    transformation_ctx = "redshift_output"
 )
 
 job.commit()
