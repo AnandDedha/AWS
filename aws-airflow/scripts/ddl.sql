@@ -1,6 +1,6 @@
 CREATE TABLE weather_data (
-    dt string,
-    weather string,
+    dt varchar(256) ,
+    weather varchar(max) ,
     temp DECIMAL(5, 2),
     feels_like DECIMAL(5, 2),
     min_temp DECIMAL(5, 2),
@@ -9,5 +9,5 @@ CREATE TABLE weather_data (
     sea_level bigint,
     ground_level bigint,
     humidity bigint,
-    wind string
+    wind varchar(256) 
 );
