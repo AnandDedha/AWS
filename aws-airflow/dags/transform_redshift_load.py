@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.providers.amazon.aws.transfers.s3_to_redshift import S3ToRedshiftOperator
-from airflow.providers.amazon.aws.transfers.gluejob import GlueJobOperator
+from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
 from datetime import datetime, timedelta
 
 default_args = {
@@ -38,6 +38,7 @@ s3_to_redshift_task = S3ToRedshiftOperator(
     redshift_conn_id='Redshift_CONN',  # You'll need to set up a Redshift connection in Airflow
     dag=dag,
 )
+
 
 
 
