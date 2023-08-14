@@ -19,6 +19,7 @@ transform_task = GlueJobOperator(
     task_id='transform_task',
     job_name='glue_transform_task',
     script_location='s3://gluescriptsbucketdatatech/transform.py',
+    s3_bucket='s3://aws-glue-assets-262136919150-us-east-1',  # S3 bucket where logs and local etl script will be uploaded
     aws_conn_id='AWS_CONN',  # You'll need to set up an AWS connection in Airflow
     region_name="us-east-1",
     iam_role_name='GlueS3',
