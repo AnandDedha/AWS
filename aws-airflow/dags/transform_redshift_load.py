@@ -28,7 +28,7 @@ transform_task = GlueJobOperator(
 
 wait_openweather_api = ExternalTaskSensor(
     task_id='wait_openweather_api',
-    external_dag_id = '',
+    external_dag_id = 'openweather_api_dag',
     external_task_id = None,
     timeout=2000,
     dag=dag,
