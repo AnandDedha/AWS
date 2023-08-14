@@ -36,8 +36,5 @@ wait_openweather_api = ExternalTaskSensor(
     allowed_states=["success"]
 )
     
-
-
-
 # Set task dependencies
 wait_openweather_api >> s3_to_redshift_task 
