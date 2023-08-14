@@ -36,7 +36,7 @@ s3_to_redshift_task = S3ToRedshiftOperator(
     s3_bucket='s3://airflowoutputtos3bucket',
     s3_key='transformed/run-1691970615954-part-r-00000',
     aws_conn_id='AWS_CONN',  # You'll need to set up an AWS connection in Airflow
-    redshift_conn_id='redshift_default',  # You'll need to set up a Redshift connection in Airflow
+    redshift_conn_id='Redshift_CONN',  # You'll need to set up a Redshift connection in Airflow
     dag=dag,
 )
 
