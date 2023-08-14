@@ -1,6 +1,6 @@
 from airflow import DAG
-from airflow.providers.amazon.aws.transfers.s3_to_redshift import S3ToRedshiftOperator
 from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
+from airflow.sensors.external_task_sensor import ExternalTaskMarker, ExternalTaskSensor
 from datetime import datetime, timedelta
 
 default_args = {
@@ -26,21 +26,18 @@ transform_task = GlueJobOperator(
     dag=dag,
 )
 
-# Define the S3 to Redshift transfer
-s3_to_redshift_task = S3ToRedshiftOperator(
-    task_id='s3_to_redshift',
-    schema='public',
-    table='weather_data',
-    copy_options=["CSV"],
-    s3_bucket='s3://airflowoutputtos3bucket',
-    s3_key='transformed/run-1691970615954-part-r-00000',
-    aws_conn_id='AWS_CONN',  # You'll need to set up an AWS connection in Airflow
-    redshift_conn_id='Redshift_CONN',  # You'll need to set up a Redshift connection in Airflow
+wait_openweather_api = ExternalTaskSensor(
+    task_id='wait_openweather_api',
+    external_dag_id = '',
+    external_task_id = None,
+    timeout=2000,
     dag=dag,
+    mode ='reschedule',
+    allowed_states=["success"]
 )
-
+    
 
 
 
 # Set task dependencies
-transform_task >> s3_to_redshift_task 
+wait_openweather_api >> s3_to_redshift_task 
