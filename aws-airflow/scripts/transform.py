@@ -45,11 +45,11 @@ changeschema_weather_dyf = ApplyMapping.apply(
     transformation_ctx="changeschema_weather_dyf",
 )
 
-changeschema_weather_dyf.show()
+#changeschema_weather_dyf.show()
 
 
 redshift_output = glueContext.write_dynamic_frame.from_options(
-    frame=AmazonRedshift_node1692064725056,
+    frame=changeschema_weather_dyf,
     connection_type="redshift",
     connection_options={
         "redshiftTmpDir": "s3://aws-glue-assets-262136919150-us-east-1/temporary/",
