@@ -45,6 +45,7 @@ changeschema_weather_dyf = ApplyMapping.apply(
     transformation_ctx="changeschema_weather_dyf",
 )
 
+changeschema_weather_dyf.show()
 
 redshift_output = glueContext.write_dynamic_frame.from_jdbc_conf(
     frame=changeschema_weather_dyf,
